@@ -1,0 +1,6 @@
+{
+  "name": "Cybersecurity Intelligence Dashboard",
+  "description": "A dashboard to view and analyze cybersecurity intelligence from various sources like NVD, MITRE ATT&CK, CISA, and MSRC. Provides a centralized view of vulnerabilities, threat actor tactics, and security alerts.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
