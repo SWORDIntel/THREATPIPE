@@ -7,7 +7,7 @@
 #    |_|  |_| \_|_|    |______|\___/|_____/|_____\_____|
 #
 # THREATPIPE
-### “Because doom-scrolling CVE feeds by hand is soooo 2023.” 🐍🚰 - (23-04-202)TODO:FIX LOGO
+### “Because doom-scrolling CVE feeds by hand is soooo 2023.” 🐍🚰 - (23-04-2002)TODO:FIX LOGO
 ```
 
 > **TL;DR** THREATPIPE slurps raw cyber-intel, squeezes it through a Pythonic pasta-maker, lets Gemini Pro sprinkle AI parmesan on top, and serves the dish in a slick React/Tailwind dashboard—complete with WebSocket-flavoured pop-ups when the sky is falling.
