@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface BadgeProps {
@@ -15,8 +16,8 @@ export const Badge: React.FC<BadgeProps> = ({
 }) => {
   const sizeClasses = size === 'sm' ? 'px-2 py-0.5 text-xs' : 'px-2.5 py-0.5 text-sm';
   
-  // Use RegExp constructor with a safe character class
-  const textRemovalRegex = new RegExp('text-[A-Za-z0-9_]+', 'g');
+  // Regex to remove text color classes (example: "text-red-500", "text-white").
+  const textRemovalRegex = /text-[A-Za-z0-9_-]+/g;
   
   // Clean up color string by removing text classes and trimming whitespace
   const colorWithoutTextClass = color.replace(textRemovalRegex, '').trim();

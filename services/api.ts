@@ -28,7 +28,7 @@ const fetchPaginatedData = async <T>(
   searchTerm?: string
 ): Promise<PaginatedResponse<T>> => {
   const params = new URLSearchParams({ page: String(page), size: String(limit) });
-  // The plan implies server-side search for /cves. We'll assume other endpoints might support it.
+  // The plan implies server-side search for the 'cves' path. We'll assume other endpoints might support it.
   // If an endpoint doesn't support search, the 'search' param will be ignored by the server.
   if (searchTerm) params.append('q', searchTerm); // Using 'q' as a common search query param name
   const response = await apiClient.get(`${endpoint}?${params.toString()}`);
@@ -38,7 +38,8 @@ const fetchPaginatedData = async <T>(
 
 // NVD CVEs
 export const fetchNvdCves = (page: number = 1, limit: number = ITEMS_PER_PAGE, searchTerm?: string): Promise<PaginatedResponse<NvdCve>> => {
-  return fetchPaginatedData<NvdCve>('/nvd', page, limit, searchTerm); // Python example uses /cves, assuming /nvd is more specific
+  // Python example uses 'cves' path, assuming 'nvd' path is more specific for this function
+  return fetchPaginatedData<NvdCve>('/nvd', page, limit, searchTerm); 
 };
 
 // MITRE Enterprise

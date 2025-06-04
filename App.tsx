@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { Header } from './components/layout/Header';
 import { Tabs, Tab } from './components/ui/Tabs';
@@ -66,6 +65,11 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col">
+      {/* DIAGNOSTIC MESSAGE START */}
+      <div style={{position: 'fixed', top: '10px', left: '10px', color: 'lime', backgroundColor: 'red', padding: '10px', fontSize: '16px', zIndex: 9999, border: '2px solid yellow'}}>
+        APP MOUNTED! If you see this, React is running.
+      </div>
+      {/* DIAGNOSTIC MESSAGE END */}
       <Toaster position="top-right" richColors theme="dark" />
       <Header onToggleSummary={() => setIsSummaryDrawerOpen(prev => !prev)} />
       <main className="flex-grow container mx-auto px-4 py-8">

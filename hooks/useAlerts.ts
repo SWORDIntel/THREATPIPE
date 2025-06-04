@@ -29,7 +29,8 @@ export const useAlerts = () => {
       };
 
       ws.onmessage = (event: MessageEvent) => {
-        let messageDataStringForCatch: string | null = null; // For logging in catch block
+        let messageDataStringForCatch: string | null = null; // Moved declaration to this scope
+        let alertPayload: RealTimeAlert | null = null;
 
         try {
           const messageData = event.data;
@@ -38,14 +39,12 @@ export const useAlerts = () => {
             toast.error('Received unparseable alert from server (data not string).');
             return;
           }
-          messageDataStringForCatch = messageData; // Capture for catch block
+          messageDataStringForCatch = messageData; // Assigned here
 
           const parsedData = JSON.parse(messageData);
           console.log('Received WebSocket message:', parsedData);
 
-          let alertPayload: RealTimeAlert | null = null;
 
-          // Check for Exploit Chain alert structure
           if (parsedData.type === 'chain' && Array.isArray(parsedData.cve_chain) && typeof parsedData.risk === 'number') {
             const chainAlertData = parsedData as { type: string; cve_chain: string[]; risk: number; summary?: string; depth?: number };
 
@@ -61,9 +60,8 @@ export const useAlerts = () => {
                  message += ` Summary: ${chainAlertData.summary}`;
             }
 
-
             alertPayload = {
-              id: `chain-${chainAlertData.cve_chain.join('-')}-${Date.now()}`, // Unique ID for toast
+              id: `chain-${chainAlertData.cve_chain.join('-')}-${Date.now()}`,
               title: `New Exploit Chain (Risk: ${riskScore.toFixed(2)})`,
               message: message.trim(),
               severity: severity,
@@ -71,14 +69,11 @@ export const useAlerts = () => {
               timestamp: new Date().toISOString(),
             };
           }
-          // Check for standard RealTimeAlert structure (ensure all required fields are present)
           else if (parsedData.id && parsedData.title && parsedData.message && parsedData.severity) {
             alertPayload = parsedData as RealTimeAlert;
           }
-          // Fallback for other potential structures or log as unknown
           else {
             console.warn('Received WebSocket message of unknown structure:', parsedData);
-            // Optionally, create a generic toast if some fields are present
              if (parsedData.message || parsedData.title) {
                 alertPayload = {
                     id: `unknown-${Date.now()}`,
@@ -95,31 +90,32 @@ export const useAlerts = () => {
           }
 
           if (alertPayload) {
-            // Directly use alertPayload and provide explicit type for the lambda.
-            // alertPayload is confirmed non-null here due to the `if (alertPayload)` check.
+            const currentAlertData = alertPayload; 
+
+            const toastOptions: { duration?: number; id?: string | number } = {
+              duration: currentAlertData.severity === 'critical' || currentAlertData.severity === 'high' ? Infinity : 10000,
+              id: currentAlertData.id,
+            };
+
             toast.custom(
-              (toastId: string | number): React.ReactElement => (
+              (tId: string | number) => ( 
                 <AlertToast
-                  alert={alertPayload!} 
-                  onDismiss={() => toast.dismiss(toastId)}
+                  alert={currentAlertData}
+                  onDismiss={() => toast.dismiss(tId)}
                 />
               ),
-              {
-                duration: alertPayload!.severity === 'critical' || alertPayload!.severity === 'high' ? Infinity : 10000,
-                id: alertPayload!.id, // Use the unique ID from the payload
-              }
+              toastOptions
             );
           }
 
-        } catch (err: unknown) { // Explicitly type err as unknown
+        } catch (err: unknown) {
           let detailedMessage = 'Failed to parse WebSocket message.';
-          // Use the captured string for logging raw data.
-          const rawDataForDisplay = messageDataStringForCatch !== null ? messageDataStringForCatch : 'N/A (data not captured or not string before parse attempt)';
+          const rawDataForDisplay = messageDataStringForCatch !== null ? messageDataStringForCatch : 'N-A (data not captured or not string before parse attempt)';
 
           if (err instanceof Error) {
             detailedMessage += ` Details: ${err.message}`;
           } else if (typeof err === 'string') {
-            detailedMessage += ` Details: ${err}`; // Handle if error is a string
+            detailedMessage += ` Details: ${err}`;
           } else {
             detailedMessage += ` An unexpected error type was caught.`;
           }

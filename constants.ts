@@ -1,6 +1,15 @@
 
-export const API_BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:8000/api';
-export const WS_BASE_URL = process.env.REACT_APP_WS_BASE || 'ws://localhost:8000'; // Adjusted to remove /ws, as it's in useAlerts
+// Safe access to potential process.env variables
+const safeGetEnv = (key: string): string | undefined => {
+  if (typeof process !== 'undefined' && process.env) {
+    return process.env[key];
+  }
+  return undefined;
+};
+
+export const API_BASE_URL = safeGetEnv('REACT_APP_API_BASE') || 'http://localhost:8000/api';
+// Note: The 'ws' path segment for WebSocket connections is appended in the useAlerts hook.
+export const WS_BASE_URL = safeGetEnv('REACT_APP_WS_BASE') || 'ws://localhost:8000'; 
 
 export const ITEMS_PER_PAGE = 12; // Consistent with original mock data views, suitable for various layouts
 
